@@ -1,14 +1,18 @@
+using BP.Domain.Utils;
+
 namespace BP.Domain;
 
 public class TransactionService
 {
     private readonly ITransactionLogger _logger;
     private readonly INotificationService _notificationService;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
-    public TransactionService(ITransactionLogger logger, INotificationService notificationService)
+    public TransactionService(ITransactionLogger logger, INotificationService notificationService, IDateTimeProvider dateTimeProvider)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public void Transfer(Account source, Account destination, decimal amount)
@@ -33,7 +37,7 @@ public class TransactionService
             SourceAccountNumber = source.AccountNumber,
             DestinationAccountNumber = destination.AccountNumber,
             Amount = amount,
-            Timestamp = DateTime.Now
+            Timestamp = _dateTimeProvider.Now
         });
 
         // Notifier le propriétaire du compte source
